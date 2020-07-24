@@ -1,0 +1,14 @@
+{
+    "name": "scheduler",
+    "version": "1.0.0",
+    "main": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+        "start": "parcel ./example/index.html",
+        "compile": "tsc"
+    },
+    "devDependencies": {
+        "typescript": "^3.9.7"
+    }
+}
