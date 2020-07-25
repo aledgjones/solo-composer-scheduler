@@ -94,7 +94,7 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
 
     private _playing: boolean = false;
     private _playStartTime: number = 0;
-    private _scheduledTicks: Set<Tick> = new Set();
+    private _scheduledTicks: { [tick: number]: boolean } = {};
 
     private _schedulePlayback(tick: Tick, when: Seconds) {
         const events = this._callback_events[tick];
@@ -104,16 +104,19 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
                 const span =
                     this._tickOffsets[tick + duration] -
                     this._tickOffsets[tick];
-                callback(when, when + span);
+                callback(when, span);
             });
         }
     }
 
+    /**
+     * Get the current tick during playback
+     */
     private getCurrentTick() {
         const position = this.ctx.currentTime - this._playStartTime;
         for (let tick = 0; tick < this.length; tick++) {
             if (this._tickOffsets[tick] > position) {
-                return tick - 1;
+                return tick < 0 ? 0 : tick - 1;
             }
         }
 
@@ -128,29 +131,30 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         if (tick === this.length) {
             this.pause();
         }
-        const currentTime = this.ctx.currentTime - this._playStartTime;
-        const lookaheadTime = currentTime + 0.5;
+        const lookaheadTime = this.ctx.currentTime - this._playStartTime + 0.2;
         for (let tick = this.tick; tick <= this._length; tick++) {
             // only look ahead to events less than 200ms away
             if (this._tickOffsets[tick] < lookaheadTime) {
                 // only schedule events not already scheduled
-                if (!this._scheduledTicks.has(tick)) {
+                if (this._scheduledTicks[tick] === undefined) {
                     // scedule events
                     this._schedulePlayback(
                         tick,
                         this._playStartTime + this._tickOffsets[tick]
                     );
                     // set the tick as scheduled
-                    this._scheduledTicks.add(tick);
+                    this._scheduledTicks[tick] = true;
                 }
             } else {
                 break;
             }
         }
 
-        if (this._playing) {
-            requestAnimationFrame(this.loop.bind(this));
-        }
+        setTimeout(() => {
+            if (this._playing) {
+                this.loop.call(this);
+            }
+        }, 25);
     }
 
     /**
@@ -228,7 +232,7 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
             this.emit("stop");
         }
         this._playing = false;
-        this._scheduledTicks.clear();
+        this._scheduledTicks = {};
     }
 }
 

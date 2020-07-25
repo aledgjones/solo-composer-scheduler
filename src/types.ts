@@ -32,4 +32,4 @@ export type BPM = number;
  * }, 16, 16)
  * ```
  */
-export type Callback = (start: Seconds, stop: Seconds) => void;
+export type Callback = (when: Seconds, duration: Seconds) => void;
