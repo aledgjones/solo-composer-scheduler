@@ -61,6 +61,7 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
 
     public set length(value: number) {
         this._length = value;
+        this._parseTempoChanges();
     }
 
     /**
@@ -82,38 +83,18 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
                 tempo = this._tempo_events[tick];
             }
 
-            const currentTempo = tempo.getAt(tick);
-            console.log(currentTempo);
+            this._tickOffsets[tick] = currentTime;
 
+            const currentTempo = tempo.getAt(tick);
             currentTime = parseFloat(
                 (currentTime + 60 / currentTempo / this.subdivisions).toFixed(4)
             );
-            this._tickOffsets[tick] = currentTime;
         }
     }
 
     private _playing: boolean = false;
     private _playStartTime: number = 0;
     private _scheduledTicks: Set<Tick> = new Set();
-
-    private _createTickNotifier(tick: number, when: Seconds) {
-        const node = new ConstantSourceNode(this.ctx);
-
-        const cb = () => {
-            if (this._playing) {
-                this.tick = tick;
-                if (tick === this._length) {
-                    this.pause();
-                }
-            }
-            node.removeEventListener("ended", cb);
-        };
-
-        node.addEventListener("ended", cb);
-
-        node.start();
-        node.stop(when);
-    }
 
     private _schedulePlayback(tick: Tick, when: Seconds) {
         const events = this._callback_events[tick];
@@ -128,19 +109,32 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         }
     }
 
+    private getCurrentTick() {
+        const position = this.ctx.currentTime - this._playStartTime;
+        for (let tick = 0; tick < this.length; tick++) {
+            if (this._tickOffsets[tick] > position) {
+                return tick - 1;
+            }
+        }
+
+        return this.length;
+    }
+
     private loop() {
-        const currentTickTime = this._tickOffsets[this._tick];
-        const lookaheadTime = currentTickTime + 0.1;
-        for (let tick = this._tick; tick <= this._length; tick++) {
-            // only look ahead to events less than 10ms away
+        const tick = this.getCurrentTick();
+        if (tick !== this.tick) {
+            this.tick = tick;
+        }
+        if (tick === this.length) {
+            this.pause();
+        }
+        const currentTime = this.ctx.currentTime - this._playStartTime;
+        const lookaheadTime = currentTime + 0.5;
+        for (let tick = this.tick; tick <= this._length; tick++) {
+            // only look ahead to events less than 200ms away
             if (this._tickOffsets[tick] < lookaheadTime) {
                 // only schedule events not already scheduled
                 if (!this._scheduledTicks.has(tick)) {
-                    // schedule the next tick
-                    this._createTickNotifier(
-                        tick,
-                        this._playStartTime + this._tickOffsets[tick]
-                    );
                     // scedule events
                     this._schedulePlayback(
                         tick,
@@ -154,12 +148,9 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
             }
         }
 
-        // initiate the loop.
-        setTimeout(() => {
-            if (this._playing) {
-                this.loop.apply(this);
-            }
-        }, 50);
+        if (this._playing) {
+            requestAnimationFrame(this.loop.bind(this));
+        }
     }
 
     /**
@@ -222,7 +213,8 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         this._playing = true;
         // we work out when tick 0 would have been.
         this._playStartTime =
-            this.ctx.currentTime - this._tickOffsets[this._tick];
+            this.ctx.currentTime - this._tickOffsets[this.tick];
+
         this.loop();
     }
 

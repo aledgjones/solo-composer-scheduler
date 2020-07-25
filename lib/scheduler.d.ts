@@ -18,8 +18,8 @@ declare class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
     private _playing;
     private _playStartTime;
     private _scheduledTicks;
-    private _createTickNotifier;
     private _schedulePlayback;
+    private getCurrentTick;
     private loop;
     clear(): void;
     scheduleTempoChange(tick: Tick, to: BPM, from?: BPM, duration?: Ticks): void;
