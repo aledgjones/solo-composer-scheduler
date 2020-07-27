@@ -5,11 +5,16 @@ import { Tempo } from "./tempo";
 /**
  * Schedule events along a predefined timeline of events.
  */
-class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
+export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
+    constructor(ctx: AudioContext) {
+        super();
+        this.ctx = ctx;
+    }
+
     /**
      * The audio context is used for precise timing of events.
      */
-    public ctx = new AudioContext();
+    public ctx: AudioContext;
 
     /**
      * Tempo events to be scheduled
@@ -235,5 +240,3 @@ class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         this._scheduledTicks = {};
     }
 }
-
-export const transport = new Scheduler();

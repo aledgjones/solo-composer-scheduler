@@ -1,6 +1,7 @@
 import { EventEmitter } from "./emitter";
 import { Tick, Ticks, BPM, Callback } from "./types";
-declare class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
+export declare class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
+    constructor(ctx: AudioContext);
     ctx: AudioContext;
     private _tempo_events;
     private _callback_events;
@@ -29,5 +30,3 @@ declare class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
     stop(silent?: boolean): void;
     pause(silent?: boolean): void;
 }
-export declare const transport: Scheduler;
-export {};

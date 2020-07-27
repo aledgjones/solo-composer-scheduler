@@ -33,3 +33,10 @@ export type BPM = number;
  * ```
  */
 export type Callback = (when: Seconds, duration: Seconds) => void;
+
+export type Progress = (total: number, complete: number) => void;
+
+export interface Patch {
+    envelope: { attack: number; release: number };
+    samples: { [pitch: number]: string };
+}
