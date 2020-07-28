@@ -3,19 +3,14 @@ import { chain } from "./utils";
 import { AudioPlayer } from "./audio-player";
 import { ExpressionPlayer } from "./expression-player";
 
-// TODO: structure it so instruments have expressions. volume, mute and analyser nodes
-// at the instrument level.
-
 /**
- * A single group of samples. Each sample is assigned to a pitch.
+ * Represents an instrument which can play multiple 'expressions'.
  */
 export class InstrumentPlayer {
     public ctx: AudioContext;
     public volumeNode: GainNode;
     public muteNode: GainNode;
     public analyserNode: AnalyserNode;
-
-    private player: AudioPlayer;
 
     constructor(ctx: AudioContext) {
         this.ctx = ctx;
@@ -33,9 +28,19 @@ export class InstrumentPlayer {
         );
     }
 
+    /**
+     * The ExpressionPlayers used for actual playback and enveloping of the audio buffer.
+     */
     private expressions: { [expression: number]: ExpressionPlayer } = {};
 
+    /**
+     * Represents if the instrument is muted
+     */
     public mute = false;
+
+    /**
+     * Represents if the instrument is solo
+     */
     public solo = false;
 
     /**

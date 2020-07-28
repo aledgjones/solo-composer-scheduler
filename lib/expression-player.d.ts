@@ -13,6 +13,9 @@ export declare class ExpressionPlayer {
     private inc;
     private events;
     private envelope;
+    /**
+     * The audio buffers actually used to produce pitches.
+     */
     private samples;
     /**
      * Returns the closest pitch to the requested pitch
@@ -23,7 +26,8 @@ export declare class ExpressionPlayer {
      */
     load(url: string, progress: Progress): Promise<void>;
     /**
-     * Play a pitch for a given duration at a specified time.
+     * Play a pitch for a given duration at a specified time. It will find the buffer with
+     * the closest pitch and tune it accordingly
      */
     play(pitch: number, when: Seconds, duration: Seconds): void;
     /**

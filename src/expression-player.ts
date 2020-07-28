@@ -21,6 +21,10 @@ export class ExpressionPlayer {
     private events: Map<number, [GainNode, AudioBufferSourceNode]> = new Map();
 
     private envelope = { attack: 0, release: 0.7 };
+
+    /**
+     * The audio buffers actually used to produce pitches.
+     */
     private samples: { [pitch: number]: AudioBuffer } = {};
 
     /**
@@ -68,7 +72,8 @@ export class ExpressionPlayer {
     }
 
     /**
-     * Play a pitch for a given duration at a specified time.
+     * Play a pitch for a given duration at a specified time. It will find the buffer with
+     * the closest pitch and tune it accordingly
      */
     public play(pitch: number, when: Seconds, duration: Seconds) {
         const id = this.inc++;

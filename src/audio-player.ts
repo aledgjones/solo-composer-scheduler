@@ -1,7 +1,5 @@
 import { InstrumentPlayer } from "./instrument-player";
 
-// TODO: volume change
-
 export class AudioPlayer {
     public ctx: AudioContext;
     private instruments: { [key: string]: InstrumentPlayer } = {};

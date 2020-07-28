@@ -1,16 +1,24 @@
 import { Progress, Seconds } from "./types";
 /**
- * A single group of samples. Each sample is assigned to a pitch.
+ * Represents an instrument which can play multiple 'expressions'.
  */
 export declare class InstrumentPlayer {
     ctx: AudioContext;
     volumeNode: GainNode;
     muteNode: GainNode;
     analyserNode: AnalyserNode;
-    private player;
     constructor(ctx: AudioContext);
+    /**
+     * The ExpressionPlayers used for actual playback and enveloping of the audio buffer.
+     */
     private expressions;
+    /**
+     * Represents if the instrument is muted
+     */
     mute: boolean;
+    /**
+     * Represents if the instrument is solo
+     */
     solo: boolean;
     /**
      * Get the RMS of the current Time Domain Data sample
