@@ -106,7 +106,7 @@ export class AudioPlayer {
      * This will take into account any muted instruments.
      */
     public solo(instrument: string) {
-        this.instruments[instrument].solo = false;
+        this.instruments[instrument].solo = true;
         this.setSamplerMuteStates();
     }
 
