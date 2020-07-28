@@ -1,4 +1,7 @@
 declare type Listener = (...args: any[]) => void;
+/**
+ * Super simple event emitter
+ */
 export declare class EventEmitter<T extends string> {
     private _events;
     private _getEventListByName;

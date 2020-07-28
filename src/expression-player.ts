@@ -1,33 +1,17 @@
 import { Patch, Progress, Seconds } from "./types";
-import { toMidiPitchNumber } from "./utils";
-import { AudioPlayer } from "./audio-player";
+import { toMidiPitchNumber, chain } from "./utils";
+import { InstrumentPlayer } from "./instrument-player";
 
 /**
  * A single group of samples. Each sample is assigned to a pitch.
  */
-export class Sampler {
+export class ExpressionPlayer {
     public ctx: AudioContext;
-    public volumeNode: GainNode;
-    public muteNode: GainNode;
-    public analyserNode: AnalyserNode;
+    public player: InstrumentPlayer;
 
-    private player: AudioPlayer;
-
-    constructor(ctx: AudioContext, player: AudioPlayer) {
+    constructor(ctx: AudioContext, instrumentPlayer: InstrumentPlayer) {
         this.ctx = ctx;
-        this.player = player;
-        this.volumeNode = this.ctx.createGain();
-        this.muteNode = this.ctx.createGain();
-        this.analyserNode = this.ctx.createAnalyser();
-        this.volumeNode.gain.value = 0.8;
-        this.muteNode.gain.value = 1.0;
-        this.analyserNode.fftSize = 256.0; // keep the sample sizes small to increase performance;
-        this.chain(
-            this.volumeNode,
-            this.muteNode,
-            this.analyserNode,
-            this.ctx.destination
-        );
+        this.player = instrumentPlayer;
     }
 
     /**
@@ -38,16 +22,6 @@ export class Sampler {
 
     private envelope = { attack: 0, release: 0.7 };
     private samples: { [pitch: number]: AudioBuffer } = {};
-
-    private _mute = false;
-    private _solo = false;
-
-    private chain(...nodes: AudioNode[]) {
-        for (let i = 0; i < nodes.length - 1; i++) {
-            const node = nodes[i];
-            node.connect(nodes[i + 1]);
-        }
-    }
 
     /**
      * Returns the closest pitch to the requested pitch
@@ -72,34 +46,6 @@ export class Sampler {
     }
 
     /**
-     * Get the RMS of the current Time Domain Data sample
-     */
-    private RMS() {
-        const data = new Float32Array(this.analyserNode.fftSize);
-        this.analyserNode.getFloatTimeDomainData(data);
-        const squared = data.reduce((out, value) => {
-            return out + value * value;
-        }, 0);
-        return Math.sqrt(squared / data.length) * 2;
-    }
-
-    /**
-     * The peak value in the current Time Domain Data sample
-     */
-    public peak() {
-        const data = new Float32Array(this.analyserNode.fftSize);
-        this.analyserNode.getFloatTimeDomainData(data);
-        let peak = 0;
-        for (let i = 0; i < data.length; i++) {
-            const value = data[i];
-            if (value > peak) {
-                peak = value;
-            }
-        }
-        return peak;
-    }
-
-    /**
      * Load a sample with a given pitch
      */
     public async load(url: string, progress: Progress) {
@@ -117,8 +63,7 @@ export class Sampler {
             const source = await this.ctx.decodeAudioData(data);
 
             this.samples[midiPitch] = source;
-            complete++;
-            progress(pitches.length, complete);
+            progress(pitches.length, ++complete);
         });
     }
 
@@ -142,10 +87,12 @@ export class Sampler {
         const source = this.ctx.createBufferSource();
         source.buffer = this.samples[samplePitch];
         source.detune.value = (pitch - samplePitch) * 100;
-        this.chain(source, envelope, this.volumeNode);
+        chain(source, envelope, this.player.volumeNode);
 
         source.start(when);
         source.stop(when + duration + this.envelope.release);
+
+        this.events.set(id, [envelope, source]);
 
         source.onended = () => {
             this.events.delete(id);
@@ -164,25 +111,5 @@ export class Sampler {
                 node.disconnect();
             });
         });
-    }
-
-    public mute() {
-        this._mute = true;
-        this.player.setSamplerMuteStates();
-    }
-
-    public unmute() {
-        this._mute = false;
-        this.player.setSamplerMuteStates();
-    }
-
-    public solo() {
-        this._solo = true;
-        this.player.setSamplerMuteStates();
-    }
-
-    public unsolo() {
-        this._solo = false;
-        this.player.setSamplerMuteStates();
     }
 }

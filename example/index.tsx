@@ -11,14 +11,12 @@ const App: FC = () => {
     const [tick, setTick] = useState(0);
 
     // loader
-    const sampler = useMemo(() => {
+    useEffect(() => {
         const sampler = Player.createSampler("violin");
-        sampler.load(patch as any, (total, progress) => {
+        sampler.load(0, patch as any, (total, progress) => {
             setPercent((progress / total) * 100);
         });
-        console.log(sampler);
         console.log(Player);
-        return sampler;
     }, []);
 
     // setup timeline
@@ -40,7 +38,9 @@ const App: FC = () => {
                     tick,
                     Transport.subdivisions,
                     (when, duration) => {
-                        sampler.play(
+                        Player.play(
+                            "violin",
+                            0,
                             60 + tick / Transport.subdivisions,
                             when,
                             duration
@@ -56,7 +56,7 @@ const App: FC = () => {
 
         Transport.on("stop", () => {
             setPlaying(false);
-            sampler.stopAll();
+            Player.stopAll();
         });
 
         Transport.on("tick", (tick: number) => {
@@ -66,7 +66,7 @@ const App: FC = () => {
 
     useEffect(() => {
         const pull = () => {
-            setAmp(sampler.peak());
+            setAmp(Player.peak("violin"));
             requestAnimationFrame(pull);
         };
         pull();
@@ -100,9 +100,9 @@ const App: FC = () => {
                         onClick={() => {
                             setMuted((m) => !m);
                             if (muted) {
-                                sampler.unmute();
+                                Player.unmute("violin");
                             } else {
-                                sampler.mute();
+                                Player.mute("violin");
                             }
                         }}
                     >

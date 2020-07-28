@@ -4,7 +4,6 @@
         "target": "es6",
         "rootDir": "src",
         "outDir": "lib",
-        "removeComments": true,
         "declaration": true,
         "declarationDir": "lib"
     },
