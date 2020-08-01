@@ -34,4 +34,8 @@ export declare class ExpressionPlayer {
      * Imediately stops all scheduled and playing sounds
      */
     stopAll(): void;
+    /**
+     * Disconnect all the playback nodes so they can be garbage collected
+     */
+    disconnectAll(): void;
 }

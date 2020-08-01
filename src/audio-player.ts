@@ -126,4 +126,12 @@ export class AudioPlayer {
     public volume(instrument: string, value: number) {
         this.instruments[instrument].volume(value);
     }
+
+    /**
+     * Disconnect all the playback nodes so they can be garbage collected
+     */
+    public disconnect(key: string) {
+        this.instruments[key].disconnectAll();
+        delete this.instruments[key];
+    }
 }

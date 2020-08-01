@@ -44,4 +44,8 @@ export declare class InstrumentPlayer {
      * Set the volume of an instrument (0.0 - 1.0);
      */
     volume(value: number): void;
+    /**
+     * Disconnect all the playback nodes so they can be garbage collected
+     */
+    disconnectAll(): void;
 }

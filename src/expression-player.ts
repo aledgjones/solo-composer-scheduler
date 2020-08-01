@@ -117,4 +117,14 @@ export class ExpressionPlayer {
             });
         });
     }
+
+    /**
+     * Disconnect all the playback nodes so they can be garbage collected
+     */
+    public disconnectAll() {
+        this.stopAll();
+        Object.keys(this.samples).forEach((key) => {
+            delete this.samples[key];
+        });
+    }
 }

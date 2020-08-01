@@ -54,7 +54,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         this._subdivisions = value;
     }
 
-    private _length: Ticks = 32;
+    private _length: Ticks = 16;
 
     /**
      * The duration in ticks of the whole schecduler timeline. This means we can calculate the duration

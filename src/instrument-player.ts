@@ -108,4 +108,17 @@ export class InstrumentPlayer {
     public volume(value: number) {
         this.volumeNode.gain.value = value * value;
     }
+
+    /**
+     * Disconnect all the playback nodes so they can be garbage collected
+     */
+    public disconnectAll() {
+        this.volumeNode.disconnect();
+        this.muteNode.disconnect();
+        this.analyserNode.disconnect();
+        Object.keys(this.expressions).forEach((key) => {
+            this.expressions[key].disconnectAll();
+            delete this.expressions[key];
+        });
+    }
 }
