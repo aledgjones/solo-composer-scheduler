@@ -30,12 +30,7 @@ export declare type BPM = number;
  */
 export declare type Callback = (when: Seconds, duration: Seconds) => void;
 export declare type Progress = (total: number, complete: number) => void;
-export interface Patch {
-    envelope: {
-        attack: number;
-        release: number;
-    };
-    samples: {
-        [pitch: number]: string;
-    };
-}
+/**
+ * [pitch, attack, release, start_loop, end_loop, data];
+ */
+export declare type Patch = [number, Seconds, Seconds, string];

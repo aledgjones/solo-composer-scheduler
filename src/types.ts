@@ -36,7 +36,7 @@ export type Callback = (when: Seconds, duration: Seconds) => void;
 
 export type Progress = (total: number, complete: number) => void;
 
-export interface Patch {
-    envelope: { attack: number; release: number };
-    samples: { [pitch: number]: string };
-}
+/**
+ * [pitch, attack, release, start_loop, end_loop, data];
+ */
+export type Patch = [number, Seconds, Seconds, string];
