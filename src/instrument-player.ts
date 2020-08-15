@@ -1,6 +1,5 @@
 import { Progress, Seconds } from "./types";
 import { chain } from "./utils";
-import { AudioPlayer } from "./audio-player";
 import { ExpressionPlayer } from "./expression-player";
 
 /**
@@ -89,7 +88,13 @@ export class InstrumentPlayer {
         when: Seconds,
         duration: Seconds
     ) {
-        this.expressions[expression].play(pitch, when, duration);
+        // FIXME: Make this a little more sophisticated with fallbacks
+        if (this.expressions[expression]) {
+            this.expressions[expression].play(pitch, when, duration);
+        } else {
+            // play using standard Expression.Natural
+            this.expressions[0].play(pitch, when, duration);
+        }
     }
 
     /**

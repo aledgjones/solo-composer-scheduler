@@ -91,9 +91,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
             this._tickOffsets[tick] = currentTime;
 
             const currentTempo = tempo.getAt(tick);
-            currentTime = parseFloat(
-                (currentTime + 60 / currentTempo / this.subdivisions).toFixed(4)
-            );
+            currentTime = currentTime + 60 / currentTempo / this.subdivisions;
         }
     }
 
@@ -119,7 +117,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
      */
     private getCurrentTick() {
         const position = this.ctx.currentTime - this._playStartTime;
-        for (let tick = 0; tick < this.length; tick++) {
+        for (let tick = 0; tick <= this.length; tick++) {
             if (this._tickOffsets[tick] > position) {
                 return tick < 0 ? 0 : tick - 1;
             }
