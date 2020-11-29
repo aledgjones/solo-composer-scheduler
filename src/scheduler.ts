@@ -104,9 +104,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         if (events) {
             events.forEach(([duration, callback]) => {
                 // calculate how long the duration is in seconds.
-                const span =
-                    this._tickOffsets[tick + duration] -
-                    this._tickOffsets[tick];
+                const span = this._tickOffsets[tick + duration] - this._tickOffsets[tick];
                 callback(when, span);
             });
         }
@@ -141,10 +139,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
                 // only schedule events not already scheduled
                 if (this._scheduledTicks[tick] === undefined) {
                     // scedule events
-                    this._schedulePlayback(
-                        tick,
-                        this._playStartTime + this._tickOffsets[tick]
-                    );
+                    this._schedulePlayback(tick, this._playStartTime + this._tickOffsets[tick]);
                     // set the tick as scheduled
                     this._scheduledTicks[tick] = true;
                 }
@@ -179,12 +174,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
      * If _from_ and _duration_ args are omitted, the tempo will take effect immediately. Else the
      * tempo will be ramped smoothly between the to and from values over the duration given
      */
-    public scheduleTempoChange(
-        tick: Tick,
-        to: BPM,
-        from?: BPM,
-        duration?: Ticks
-    ) {
+    public scheduleTempoChange(tick: Tick, to: BPM, from?: BPM, duration?: Ticks) {
         this._tempo_events[tick] = new Tempo(tick, to, from, duration);
         this._parseTempoChanges();
     }
@@ -219,8 +209,7 @@ export class Scheduler extends EventEmitter<"start" | "stop" | "tick"> {
         }
         this._playing = true;
         // we work out when tick 0 would have been.
-        this._playStartTime =
-            this.ctx.currentTime - this._tickOffsets[this.tick];
+        this._playStartTime = this.ctx.currentTime - this._tickOffsets[this.tick];
 
         this.loop();
     }

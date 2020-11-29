@@ -19,12 +19,7 @@ export class InstrumentPlayer {
         this.volumeNode.gain.value = 0.8;
         this.muteNode.gain.value = 1.0;
         this.analyserNode.fftSize = 256.0; // keep the sample sizes small to increase performance;
-        chain(
-            this.volumeNode,
-            this.muteNode,
-            this.analyserNode,
-            this.ctx.destination
-        );
+        chain(this.volumeNode, this.muteNode, this.analyserNode, this.ctx.destination);
     }
 
     /**
@@ -82,12 +77,7 @@ export class InstrumentPlayer {
     /**
      * Play a pitch for a given duration at a specified time.
      */
-    public play(
-        expression: number,
-        pitch: number,
-        when: Seconds,
-        duration: Seconds
-    ) {
+    public play(expression: number, pitch: number, when: Seconds, duration: Seconds) {
         // FIXME: Make this a little more sophisticated with fallbacks
         if (this.expressions[expression]) {
             this.expressions[expression].play(pitch, when, duration);

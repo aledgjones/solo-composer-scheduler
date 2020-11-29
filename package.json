@@ -1,22 +1,14 @@
 {
-    "name": "solo-composer-scheduler",
-    "version": "1.0.0",
-    "main": "./lib/index.js",
-    "types": "./lib/index.d.ts",
-    "license": "MIT",
-    "scripts": {
-        "start": "parcel ./example/index.html",
-        "build": "tsc"
-    },
-    "devDependencies": {
-        "@types/react": "^16.9.43",
-        "@types/react-dom": "^16.9.8",
-        "parcel-plugin-json-url-loader": "^0.1.2",
-        "react": "^16.13.1",
-        "react-dom": "^16.13.1",
-        "typescript": "^3.9.7"
-    },
-    "browserslist": [
-        "last 1 Chrome version"
-    ]
+  "name": "solo-composer-scheduler",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "4.1.2"
+  }
 }

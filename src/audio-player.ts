@@ -60,13 +60,7 @@ export class AudioPlayer {
     /**
      * Play a note
      */
-    public play(
-        instrument: string,
-        expression: number,
-        pitch: number,
-        when: number,
-        duration: number
-    ) {
+    public play(instrument: string, expression: number, pitch: number, when: number, duration: number) {
         this.instruments[instrument].play(expression, pitch, when, duration);
     }
 

@@ -38,10 +38,7 @@ export class ExpressionPlayer {
     private findClosestSampleToPitch(pitch: number): Sample {
         let closest: Sample;
         this.samples.forEach((sample) => {
-            if (
-                closest === undefined ||
-                Math.abs(pitch - sample.pitch) < Math.abs(pitch - closest.pitch)
-            ) {
+            if (closest === undefined || Math.abs(pitch - sample.pitch) < Math.abs(pitch - closest.pitch)) {
                 closest = sample;
             }
         });
@@ -85,10 +82,7 @@ export class ExpressionPlayer {
         const envelope = this.ctx.createGain();
         envelope.gain.value = 1.0;
         envelope.gain.setValueAtTime(1.0, when + duration);
-        envelope.gain.exponentialRampToValueAtTime(
-            0.01,
-            when + duration + sample.release
-        );
+        envelope.gain.exponentialRampToValueAtTime(0.01, when + duration + sample.release);
 
         // create source and connect it to the base of the node chain
         const source = this.ctx.createBufferSource();

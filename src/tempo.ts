@@ -4,12 +4,7 @@ import { Tick, BPM, Ticks } from "./types";
  * The Tompo Class represents a change of tempo. Either imediately or over a duration.
  */
 export class Tempo {
-    constructor(
-        public at: Tick,
-        public to: BPM,
-        public from?: BPM,
-        public duration?: Ticks
-    ) {
+    constructor(public at: Tick, public to: BPM, public from?: BPM, public duration?: Ticks) {
         if (from === undefined) {
             this.from = to;
         }
@@ -30,8 +25,6 @@ export class Tempo {
      * Calculate the tempo at a given tick taking into account tempo ramping between values.
      */
     public getAt(tick: Tick) {
-        return tick >= this.at + this.duration
-            ? this.to
-            : this.calculateLinearRamp(tick);
+        return tick >= this.at + this.duration ? this.to : this.calculateLinearRamp(tick);
     }
 }
