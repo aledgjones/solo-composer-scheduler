@@ -5,8 +5,7 @@
   "types": "./lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "postinstall": "tsc"
+    "build": "tsc"
   },
   "devDependencies": {
     "typescript": "4.1.2"
